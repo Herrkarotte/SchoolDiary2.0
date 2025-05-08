@@ -10,7 +10,7 @@
 - Современный стек технологий- используется Jetpack Compose (вместо XML).
 ## Планы по развитию:
 - Полная реализация всех экранов на Сompose![Progress](https://img.shields.io/badge/В%20разработке-yellow).
-- Интеграция современных инструментов (Dagger Hilt)![Progress](https://img.shields.io/badgeВ%20разработке-yellow).
+- Интеграция современных инструментов (Dagger Hilt)![Progress](https://img.shields.io/badge/В%20разработке-yellow).
 - Внедрение анимаций и микровзаимодействий![Progress](https://img.shields.io/badge/В%20разработке-yellow).
 ## Технологии:
 ### Архитектура:
