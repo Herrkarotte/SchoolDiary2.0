@@ -19,3 +19,18 @@
 - Compose.
 - Retrofit.
 - DI(Dagger Hilt).
+
+  Ученик
+  Логин: Student1
+
+Пароль: Student1
+
+Учитель
+Логин: Teacher1
+
+Пароль: Teacher1
+
+Завуч
+Логин: Zavuch1
+
+Пароль: Zavuch1
