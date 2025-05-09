@@ -28,6 +28,7 @@ class AuthRepositoryImp @Inject constructor
             Log.i(this@AuthRepositoryImp.javaClass.name, "Ответ сервера: $user")
             prefs.userId = user.userId
             prefs.userRole = user.roles.firstOrNull() ?: ""
+            prefs.userToken = user.token ?: ""
             return@withContext user
         }
 
@@ -35,7 +36,7 @@ class AuthRepositoryImp @Inject constructor
 
     override fun getCurrentUser(): User? {
         return if (isLoggedIn()) {
-            Log.i("Берем текущего","${User(prefs.userId, listOf(prefs.userRole), "")}")
+            Log.i("Берем текущего", "${User(prefs.userId, listOf(prefs.userRole), "")}")
             User(prefs.userId, listOf(prefs.userRole), "")
         } else {
             null
@@ -43,5 +44,4 @@ class AuthRepositoryImp @Inject constructor
     }
 
     override fun logout() = prefs.clear()
-
 }
