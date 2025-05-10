@@ -27,10 +27,6 @@ object NetworkModule {
             if (prefs.userToken.isNotEmpty()) {
                 requestBuilder.header("Authorization", "Bearer ${prefs.userToken}")
             }
-
-            requestBuilder.header("Accept", "application/json")
-                .header("Content-Type", "application/json")
-
             chain.proceed(requestBuilder.build())
         }
     }
@@ -50,7 +46,7 @@ object NetworkModule {
     @Singleton
     fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
-            .baseUrl("myAPI")
+            .baseUrl("https://schooldiary.cloudpub.ru/api/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

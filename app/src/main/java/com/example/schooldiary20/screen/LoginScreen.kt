@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.schooldiary20.viewmodel.AuthState
 import com.example.schooldiary20.viewmodel.AuthViewModel
@@ -25,7 +24,7 @@ import com.example.schooldiary20.viewmodel.AuthViewModel
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel
 ) {
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -37,7 +36,6 @@ fun LoginScreen(
                     popUpTo("login") { inclusive = true }
                 }
             }
-
             else -> {}
         }
     }
