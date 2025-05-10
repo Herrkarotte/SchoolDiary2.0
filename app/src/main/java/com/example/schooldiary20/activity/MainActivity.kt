@@ -1,15 +1,18 @@
 package com.example.schooldiary20.activity
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -33,79 +36,47 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SchoolDiary20Theme {
-                val navController = rememberNavController()
-                val authViewModel: AuthViewModel = hiltViewModel()
-                val authState by authViewModel.authState.collectAsState()
-                val currentUser by authViewModel.currentUser.collectAsState()
-
-
-                LaunchedEffect(authState, currentUser) {
-                    Log.d("MainActivity", "AuthState: $authState")
-                    Log.d("MainActivity", "CurrentUser: $currentUser")
-                }
-
-
-                val showBottomBar = remember(authState, currentUser) {
-                    authState is AuthState.Authorized && currentUser != null &&
-                            currentUser!!.roles.isNotEmpty()
-                }
-
-
-                LaunchedEffect(authState) {
-                    when (authState) {
-                        is AuthState.Authorized -> {
-                            if (navController.currentDestination?.route !in listOf(
-                                    "profile",
-                                    "studentScreen",
-                                    "teacherScreen",
-                                    "headTeacherScreen"
-                                )
-                            ) {
-                                navController.navigate("profile") {
-                                    popUpTo("login") { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                            }
-                        }
-
-                        is AuthState.Unauthorized -> {
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        }
-
-                        else -> {}
-                    }
-                }
-
-                Scaffold(
-                    bottomBar = {
-                        if (showBottomBar) {
-                            currentUser?.let { user ->
-                                val role = UserRole.fromString(user.roles.firstOrNull() ?: "")
-
-                                BottomBar(
-                                    navController = navController,
-                                    role = role
-                                )
-
-                            }
-                        }
-                    }
-                ) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "login",
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable("login") { LoginScreen(navController, authViewModel) }
-                        composable("profile") { ProfileScreen(navController, authViewModel) }
-                        composable("studentScreen") { StudentTestScreen() }
-                        composable("teacherScreen") { TeacherTestScreen() }
-                        composable("headTeacherScreen") { HeadTeacherTestScreen() }
-                    }
-                }
+                MainApp()
             }
+        }
+    }
+}
+
+@Composable
+fun MainApp() {
+    val navController = rememberNavController()
+    val viewModel: AuthViewModel = hiltViewModel()
+    val authState by viewModel.authState.collectAsState()
+    val currentUser by viewModel.currentUser.collectAsState()
+
+    Scaffold(
+        bottomBar = {
+            AnimatedVisibility(
+                visible = authState is AuthState.Authorized && currentUser != null,
+                enter = slideInVertically(
+                    animationSpec = spring(dampingRatio = 0.3f, stiffness = 150f),
+                    initialOffsetY = { it }
+                ),
+                exit = slideOutVertically(
+                    animationSpec = tween(durationMillis = 1000),
+                    targetOffsetY = { it }
+                ))
+            {
+                val role = UserRole.fromString(currentUser?.roles?.firstOrNull() ?: "")
+                BottomBar(navController, role)
+            }
+        }
+    ) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = "login",
+            modifier = Modifier.padding(padding)
+        ) {
+            composable("login") { LoginScreen(navController, viewModel) }
+            composable("profile") { ProfileScreen(navController, viewModel) }
+            composable("studentScreen") { StudentTestScreen() }
+            composable("teacherScreen") { TeacherTestScreen() }
+            composable("headTeacherScreen") { HeadTeacherTestScreen() }
         }
     }
 }
