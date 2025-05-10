@@ -1,9 +1,9 @@
 package com.example.schooldiary20.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schooldiary20.data.User
+import com.example.schooldiary20.data.UserInfo
 import com.example.schooldiary20.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,11 +16,14 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val repo: AuthRepository
 ) : ViewModel() {
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Unauthorized)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
+
+    private val _userInfo = MutableStateFlow<UserInfoState>(UserInfoState.NotLoaded)
+    val userInfo: StateFlow<UserInfoState> = _userInfo.asStateFlow()
 
     init {
         checkAuth()
@@ -33,10 +36,22 @@ class AuthViewModel @Inject constructor(
                 val user = repo.login(login, password)
                 _currentUser.value = user
                 _authState.value = AuthState.Authorized(user)
-                Log.d("AuthVM", "User set: ${user.userId}, role: ${user.roles.firstOrNull()}")
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Ошибка авторизации")
                 _currentUser.value = null
+            }
+        }
+    }
+
+    fun loadUserInfo() {
+        viewModelScope.launch {
+            val userId = _currentUser.value?.userId ?: return@launch
+            _userInfo.value = UserInfoState.Loading
+            try {
+                val info = repo.getUserInfo(userId)
+                _userInfo.value = UserInfoState.Success(info)
+            } catch (e: Exception) {
+                _userInfo.value = UserInfoState.Error(e.message ?: "Ошибка загрузки")
             }
         }
     }
@@ -71,6 +86,7 @@ class AuthViewModel @Inject constructor(
                 repo.logout()
                 _currentUser.value = null
                 _authState.value = AuthState.Unauthorized
+                _userInfo.value = UserInfoState.NotLoaded
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Logout failed")
             }
@@ -83,4 +99,11 @@ sealed class AuthState {
     object Loading : AuthState()
     data class Authorized(val user: User) : AuthState()
     data class Error(val message: String) : AuthState()
+}
+
+sealed class UserInfoState {
+    object NotLoaded : UserInfoState()
+    object Loading : UserInfoState()
+    data class Success(val info: UserInfo) : UserInfoState()
+    data class Error(val message: String) : UserInfoState()
 }
