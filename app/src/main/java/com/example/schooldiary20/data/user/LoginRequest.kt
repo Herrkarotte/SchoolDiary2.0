@@ -1,4 +1,4 @@
-package com.example.schooldiary20.data
+package com.example.schooldiary20.data.user
 
 data class LoginRequest(
     val login: String,
