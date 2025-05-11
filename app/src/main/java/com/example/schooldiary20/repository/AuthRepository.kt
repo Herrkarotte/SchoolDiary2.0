@@ -1,9 +1,9 @@
 package com.example.schooldiary20.repository
 
 import com.example.schooldiary20.api.ApiService
-import com.example.schooldiary20.data.LoginRequest
-import com.example.schooldiary20.data.User
-import com.example.schooldiary20.data.UserInfo
+import com.example.schooldiary20.data.user.LoginRequest
+import com.example.schooldiary20.data.user.User
+import com.example.schooldiary20.data.user.UserInfo
 import com.example.schooldiary20.preference.Preferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,6 +32,7 @@ class AuthRepositoryImp @Inject constructor
             prefs.userId = user.userId
             prefs.userRole = user.roles.firstOrNull() ?: ""
             prefs.userToken = user.token ?: ""
+            prefs.userClass = user.classId ?: ""
             return@withContext user
         }
 

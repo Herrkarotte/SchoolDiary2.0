@@ -2,8 +2,8 @@ package com.example.schooldiary20.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.schooldiary20.data.User
-import com.example.schooldiary20.data.UserInfo
+import com.example.schooldiary20.data.user.User
+import com.example.schooldiary20.data.user.UserInfo
 import com.example.schooldiary20.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
