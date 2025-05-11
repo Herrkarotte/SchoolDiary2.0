@@ -19,5 +19,9 @@ class Preferences @Inject constructor(@ApplicationContext context: Context) {
         get() = prefs.getString("user_token", "") ?: ""
         set(value) = prefs.edit().putString("user_token", value).apply()
 
+    var userClass: String
+        get() = prefs.getString("user_class", "") ?: ""
+        set(value) = prefs.edit().putString("user_class", value).apply()
+
     fun clear() = prefs.edit().clear().apply()
 }
