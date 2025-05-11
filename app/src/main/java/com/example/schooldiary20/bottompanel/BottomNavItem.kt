@@ -25,8 +25,8 @@ sealed class BottomNavItem(
         title = "Тестовый экран"
     )
 
-    object StudentScreen : BottomNavItem(
-        route = "studentScreen",
+    object ScheduleScreen : BottomNavItem(
+        route = "scheduleScreen",
         icon = Icons.Default.Star,
         title = "Тестовый экран"
     )
@@ -40,8 +40,8 @@ sealed class BottomNavItem(
     companion object {
         fun getItemsForRole(role: UserRole): List<BottomNavItem> {
             return when (role) {
-                UserRole.STUDENT -> listOf(Profile, StudentScreen)
-                UserRole.TEACHER -> listOf(Profile, TeacherScreen)
+                UserRole.STUDENT -> listOf(Profile, ScheduleScreen)
+                UserRole.TEACHER -> listOf(Profile, TeacherScreen,ScheduleScreen)
                 UserRole.HEADTEACHER -> listOf(Profile, HeadTeacherScreen)
             }
         }
