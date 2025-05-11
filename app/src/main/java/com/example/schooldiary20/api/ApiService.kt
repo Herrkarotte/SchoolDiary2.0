@@ -1,8 +1,9 @@
 package com.example.schooldiary20.api
 
-import com.example.schooldiary20.data.LoginRequest
-import com.example.schooldiary20.data.User
-import com.example.schooldiary20.data.UserInfoResponse
+import com.example.schooldiary20.data.schedule.ScheduleResponse
+import com.example.schooldiary20.data.user.LoginRequest
+import com.example.schooldiary20.data.user.User
+import com.example.schooldiary20.data.user.UserInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -18,4 +19,8 @@ interface ApiService {
     suspend fun getUserInfo(
         @Path("userId") userId: String
     ): UserInfoResponse
+    @GET("Schedules/ByClassId/{classId}/{weekId}")
+    suspend fun getScheduleByClassId(
+        @Path("classId") classId: String, @Path("weekId") weekId: String
+    ): ScheduleResponse
 }
