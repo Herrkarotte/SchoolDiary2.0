@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.schooldiary20.bottompanel.BottomBar
 import com.example.schooldiary20.roles.UserRole
+import com.example.schooldiary20.screen.DetailsScreen
 import com.example.schooldiary20.screen.HeadTeacherTestScreen
 import com.example.schooldiary20.screen.LoginScreen
 import com.example.schooldiary20.screen.ProfileScreen
@@ -79,7 +80,10 @@ fun MainApp() {
             composable("login") { LoginScreen(navController, viewModel) }
             composable("profile") { ProfileScreen(navController, viewModel) }
             composable("scheduleScreen") { ScheduleScreen(navController) }
-            composable("detailsScreen") {}
+            composable("detailsScreen/{dayName}") { backStackEntry ->
+                val dayName = backStackEntry.arguments?.getString("dayName") ?: ""
+                DetailsScreen(dayName = dayName)
+            }
             composable("teacherScreen") { TeacherTestScreen() }
             composable("headTeacherScreen") { HeadTeacherTestScreen() }
         }

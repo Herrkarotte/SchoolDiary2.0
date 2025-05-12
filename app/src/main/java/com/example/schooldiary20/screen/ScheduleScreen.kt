@@ -1,6 +1,7 @@
 package com.example.schooldiary20.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,8 +35,7 @@ import com.example.schooldiary20.viewmodel.ScheduleViewModel
 
 @Composable
 fun ScheduleScreen(
-    navController: NavController,
-    viewModel: ScheduleViewModel = hiltViewModel()
+    navController: NavController, viewModel: ScheduleViewModel = hiltViewModel()
 ) {
     val schedule by viewModel.schedule.collectAsState()
 
@@ -43,17 +46,20 @@ fun ScheduleScreen(
         when (schedule) {
             is ScheduleState.Loading -> LinearProgressIndicator(Modifier.align(Alignment.Center))
             is ScheduleState.Success -> {
-                val schedule = (schedule as ScheduleState.Success).schedule
+                val schedules = (schedule as ScheduleState.Success).schedule
                 LazyColumn(
                     modifier = Modifier.padding(vertical = 8.dp)
                 ) {
-                    schedule.schedule.forEach { day ->
+                    schedules.schedule.forEach { day ->
                         stickyHeader {
                             DayCardHeader(day.weekDayName)
                         }
 
                         item {
-                            DaySchedule(day)
+                            DaySchedule(day, onClick = {
+                                viewModel.getDaySchedule(day.weekDayName)
+                                navController.navigate("detailsScreen/${day.weekDayName}")
+                            })
                         }
                     }
                 }
@@ -78,17 +84,18 @@ fun DayCardHeader(dayName: String) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
-            text = "${dayName}"
+            text = dayName
         )
     }
 }
 
 @Composable
-fun DaySchedule(day: Schedule) {
+fun DaySchedule(day: Schedule, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
@@ -122,9 +129,15 @@ fun LessonItem(lesson: Lesson) {
             text = "${lesson.lessonOrder}. ${lesson.subjectName}",
 
             )
+        if (lesson.homework != null) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Есть домашнее задание",
+                tint = Color.Red
+            )
+        }
         Text(
             text = "${lesson.startTime.dropLast(3)}–${lesson.endTime.dropLast(3)}",
-
-            )
+        )
     }
 }
