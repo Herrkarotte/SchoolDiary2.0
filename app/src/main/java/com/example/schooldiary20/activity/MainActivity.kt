@@ -82,7 +82,7 @@ fun MainApp() {
             composable("scheduleScreen") { ScheduleScreen(navController) }
             composable("detailsScreen/{dayName}") { backStackEntry ->
                 val dayName = backStackEntry.arguments?.getString("dayName") ?: ""
-                DetailsScreen(dayName = dayName)
+                DetailsScreen(dayName = dayName, navController = navController)
             }
             composable("teacherScreen") { TeacherTestScreen() }
             composable("headTeacherScreen") { HeadTeacherTestScreen() }
