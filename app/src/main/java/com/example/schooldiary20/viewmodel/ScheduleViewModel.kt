@@ -22,6 +22,7 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
     private val academicYearEndDay = 31
 
     private val _currentWeek = MutableStateFlow(calculateCurrentWeek())
+    val currentWeek: StateFlow<Int> = _currentWeek.asStateFlow()
 
 
     private val _schedule = MutableStateFlow<ScheduleState>(ScheduleState.NotLoaded)
@@ -30,8 +31,13 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
     private val _selectedDay = MutableStateFlow<Schedule?>(null)
     val selectedDay: StateFlow<Schedule?> = _selectedDay.asStateFlow()
 
-    fun plusWeek() = _currentWeek.value.plus(1)
-    fun minusWeek() = _currentWeek.value.minus(1)
+    fun plusWeek() {
+        _currentWeek.value += 1
+    }
+
+    fun minusWeek() {
+        _currentWeek.value -= 1
+    }
 
     private fun calculateCurrentWeek(): Int {
         val today = LocalDate.now()
@@ -70,6 +76,7 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
             }
         }
     }
+
     fun getDaySchedule(weekDayName: String) {
         val currentSchedule = (_schedule.value as? ScheduleState.Success)?.schedule
         currentSchedule?.schedule?.find { it.weekDayName == weekDayName }?.let { daySchedule ->

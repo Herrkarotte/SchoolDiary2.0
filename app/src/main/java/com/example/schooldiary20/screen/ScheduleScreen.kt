@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +41,17 @@ fun ScheduleScreen(
     navController: NavController, viewModel: ScheduleViewModel = hiltViewModel()
 ) {
     val schedule by viewModel.schedule.collectAsState()
+    val currentWeek by viewModel.currentWeek.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(currentWeek) {
         viewModel.getScheduleForStudent()
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        WeekSelector(
+            currentWeek = currentWeek,
+            onPrevWeek = { viewModel.minusWeek() },
+            onNextWeek = { viewModel.plusWeek() }
+        )
     }
     Box(modifier = Modifier.fillMaxSize()) {
         when (schedule) {
@@ -66,11 +77,43 @@ fun ScheduleScreen(
             }
 
             is ScheduleState.Error -> {
-                Text("Не удалось загрузить расписание")
-                Button({ viewModel.getScheduleForStudent() }) { Text("Повторить") }
+                Box(modifier = Modifier.align(Alignment.Center)) {
+                    Text("Не удалось загрузить расписание")
+
+                    Button(
+                        modifier = Modifier.padding(20.dp),
+                        onClick = { viewModel.getScheduleForStudent() }) { Text("Повторить") }
+                }
             }
 
             is ScheduleState.NotLoaded -> {}
+        }
+    }
+}
+
+@Composable
+fun WeekSelector(
+    currentWeek: Int,
+    onPrevWeek: () -> Unit,
+    onNextWeek: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = onPrevWeek) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Предыдущая неделя")
+        }
+
+        Text(
+            text = "Неделя $currentWeek",
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        IconButton(onClick = onNextWeek) {
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Следующая неделя")
         }
     }
 }
