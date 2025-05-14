@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +26,8 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
     private val _currentWeek = MutableStateFlow(calculateCurrentWeek())
     val currentWeek: StateFlow<Int> = _currentWeek.asStateFlow()
 
+    private val _currentWeekDates = MutableStateFlow<Pair<LocalDate, LocalDate>?>(null)
+    val currentWeekDates: StateFlow<Pair<LocalDate, LocalDate>?> = _currentWeekDates.asStateFlow()
 
     private val _schedule = MutableStateFlow<ScheduleState>(ScheduleState.NotLoaded)
     val schedule: StateFlow<ScheduleState> = _schedule.asStateFlow()
@@ -31,23 +35,56 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
     private val _selectedDay = MutableStateFlow<Schedule?>(null)
     val selectedDay: StateFlow<Schedule?> = _selectedDay.asStateFlow()
 
+    init {
+        updateWeekDates()
+    }
+
     fun plusWeek() {
         _currentWeek.value += 1
+        updateWeekDates()
     }
 
     fun minusWeek() {
         _currentWeek.value -= 1
+        updateWeekDates()
+    }
+
+    private fun updateWeekDates() {
+        val startDate = calculateWeekStartDate(_currentWeek.value)
+        val endDate = startDate?.plusDays(5)
+        if (startDate != null && endDate != null) {
+            _currentWeekDates.value = Pair(startDate, endDate)
+        }
+    }
+
+    private fun calculateWeekStartDate(weekNumber: Int): LocalDate? {
+        val today = LocalDate.now()
+        val currentYear = today.year
+
+        var academicYearStart = LocalDate.of(
+            if (today.monthValue >= academicYearStartMonth) currentYear else currentYear - 1,
+            academicYearStartMonth,
+            academicYearStartDay
+        )
+
+        academicYearStart = academicYearStart.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+
+        return try {
+            academicYearStart.plusWeeks(weekNumber.toLong() - 1)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun calculateCurrentWeek(): Int {
         val today = LocalDate.now()
         val currentYear = today.year
 
-        val startDate = LocalDate.of(
+        var startDate = LocalDate.of(
             if (today.monthValue >= academicYearStartMonth) currentYear else currentYear - 1,
             academicYearStartMonth,
             academicYearStartDay
-        )
+        ).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
         val endDate = LocalDate.of(
             if (today.monthValue >= academicYearStartMonth) currentYear + 1 else currentYear,
@@ -59,8 +96,8 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
             today.isBefore(startDate) -> 0
             today.isAfter(endDate) -> 0
             else -> {
-                val daysBetween = ChronoUnit.DAYS.between(startDate, today)
-                (daysBetween / 7).toInt() + 1
+                val weeksBetween = ChronoUnit.WEEKS.between(startDate, today)
+                weeksBetween.toInt() + 1
             }
         }
     }

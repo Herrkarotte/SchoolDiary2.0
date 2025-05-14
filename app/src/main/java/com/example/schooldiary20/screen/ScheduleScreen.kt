@@ -35,6 +35,9 @@ import com.example.schooldiary20.data.schedule.Lesson
 import com.example.schooldiary20.data.schedule.Schedule
 import com.example.schooldiary20.viewmodel.ScheduleState
 import com.example.schooldiary20.viewmodel.ScheduleViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
@@ -42,13 +45,14 @@ fun ScheduleScreen(
 ) {
     val schedule by viewModel.schedule.collectAsState()
     val currentWeek by viewModel.currentWeek.collectAsState()
+    val weekDates by viewModel.currentWeekDates.collectAsState()
 
     LaunchedEffect(currentWeek) {
         viewModel.getScheduleForStudent()
     }
     Column(modifier = Modifier.fillMaxSize()) {
         WeekSelector(
-            currentWeek = currentWeek,
+            weekDates = weekDates,
             onPrevWeek = { viewModel.minusWeek() },
             onNextWeek = { viewModel.plusWeek() }
         )
@@ -93,13 +97,13 @@ fun ScheduleScreen(
 
 @Composable
 fun WeekSelector(
-    currentWeek: Int,
+    weekDates: Pair<LocalDate, LocalDate>?,
     onPrevWeek: () -> Unit,
     onNextWeek: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -107,11 +111,12 @@ fun WeekSelector(
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Предыдущая неделя")
         }
 
-        Text(
-            text = "Неделя $currentWeek",
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
+        weekDates?.let { (startDate, endDate) ->
+            val dateFormater = DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
+            Text(
+                text = "${startDate.format(dateFormater)}-${endDate.format(dateFormater)}"
+            )
+        }
         IconButton(onClick = onNextWeek) {
             Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Следующая неделя")
         }
