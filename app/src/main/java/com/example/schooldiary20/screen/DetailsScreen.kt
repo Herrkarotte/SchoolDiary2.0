@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.schooldiary20.data.schedule.Lesson
 import com.example.schooldiary20.viewmodel.ScheduleViewModel
@@ -32,7 +31,7 @@ import com.example.schooldiary20.viewmodel.ScheduleViewModel
 @Composable
 fun DetailsScreen(
     dayName: String,
-    viewModel: ScheduleViewModel = hiltViewModel(),
+    viewModel: ScheduleViewModel,
     navController: NavController
 ) {
     val daySchedule by viewModel.selectedDay.collectAsState()

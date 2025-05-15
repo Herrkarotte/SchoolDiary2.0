@@ -15,6 +15,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -31,6 +32,7 @@ import com.example.schooldiary20.screen.TeacherTestScreen
 import com.example.schooldiary20.ui.theme.SchoolDiary20Theme
 import com.example.schooldiary20.viewmodel.AuthState
 import com.example.schooldiary20.viewmodel.AuthViewModel
+import com.example.schooldiary20.viewmodel.ScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -82,7 +84,15 @@ fun MainApp() {
             composable("scheduleScreen") { ScheduleScreen(navController) }
             composable("detailsScreen/{dayName}") { backStackEntry ->
                 val dayName = backStackEntry.arguments?.getString("dayName") ?: ""
-                DetailsScreen(dayName = dayName, navController = navController)
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("scheduleScreen")
+                }
+                val scheduleViewModel: ScheduleViewModel = hiltViewModel(parentEntry)
+                DetailsScreen(
+                    dayName = dayName,
+                    viewModel = scheduleViewModel,
+                    navController = navController
+                )
             }
             composable("teacherScreen") { TeacherTestScreen() }
             composable("headTeacherScreen") { HeadTeacherTestScreen() }

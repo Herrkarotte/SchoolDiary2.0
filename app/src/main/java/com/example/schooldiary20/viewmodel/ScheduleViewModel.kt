@@ -115,9 +115,23 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
     }
 
     fun getDaySchedule(weekDayName: String) {
-        val currentSchedule = (_schedule.value as? ScheduleState.Success)?.schedule
-        currentSchedule?.schedule?.find { it.weekDayName == weekDayName }?.let { daySchedule ->
-            _selectedDay.value = daySchedule
+        viewModelScope.launch {
+            _selectedDay.value = null
+
+            when (val current = _schedule.value) {
+                is ScheduleState.Success -> {
+                    val foundDay = current.schedule.schedule
+                        .firstOrNull { it.weekDayName == weekDayName }
+
+                    _selectedDay.value = foundDay ?: run {
+                        null
+                    }
+                }
+                ScheduleState.Loading -> {
+                }
+                else -> {
+                }
+            }
         }
     }
 

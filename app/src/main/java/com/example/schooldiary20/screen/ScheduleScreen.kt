@@ -56,41 +56,42 @@ fun ScheduleScreen(
             onPrevWeek = { viewModel.minusWeek() },
             onNextWeek = { viewModel.plusWeek() }
         )
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
-        when (schedule) {
-            is ScheduleState.Loading -> LinearProgressIndicator(Modifier.align(Alignment.Center))
-            is ScheduleState.Success -> {
-                val schedules = (schedule as ScheduleState.Success).schedule
-                LazyColumn(
-                    modifier = Modifier.padding(vertical = 8.dp)
-                ) {
-                    schedules.schedule.forEach { day ->
-                        stickyHeader {
-                            DayCardHeader(day.weekDayName)
-                        }
 
-                        item {
-                            DaySchedule(day, onClick = {
-                                viewModel.getDaySchedule(day.weekDayName)
-                                navController.navigate("detailsScreen/${day.weekDayName}")
-                            })
+        Box(modifier = Modifier.weight(1f)) {
+            when (schedule) {
+                is ScheduleState.Loading -> LinearProgressIndicator(Modifier.align(Alignment.Center))
+                is ScheduleState.Success -> {
+                    val schedules = (schedule as ScheduleState.Success).schedule
+                    LazyColumn(
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        schedules.schedule.forEach { day ->
+                            stickyHeader {
+                                DayCardHeader(day.weekDayName)
+                            }
+
+                            item {
+                                DaySchedule(day, onClick = {
+                                    viewModel.getDaySchedule(day.weekDayName)
+                                    navController.navigate("detailsScreen/${day.weekDayName}")
+                                })
+                            }
                         }
                     }
                 }
-            }
 
-            is ScheduleState.Error -> {
-                Box(modifier = Modifier.align(Alignment.Center)) {
-                    Text("Не удалось загрузить расписание")
+                is ScheduleState.Error -> {
+                    Box(modifier = Modifier.align(Alignment.Center)) {
+                        Text("Не удалось загрузить расписание")
 
-                    Button(
-                        modifier = Modifier.padding(20.dp),
-                        onClick = { viewModel.getScheduleForStudent() }) { Text("Повторить") }
+                        Button(
+                            modifier = Modifier.padding(20.dp),
+                            onClick = { viewModel.getScheduleForStudent() }) { Text("Повторить") }
+                    }
                 }
-            }
 
-            is ScheduleState.NotLoaded -> {}
+                is ScheduleState.NotLoaded -> {}
+            }
         }
     }
 }
