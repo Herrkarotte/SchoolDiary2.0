@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.schooldiary20.data.schedule.Lesson
 import com.example.schooldiary20.data.schedule.Schedule
+import com.example.schooldiary20.roles.UserRole
 import com.example.schooldiary20.viewmodel.ScheduleState
 import com.example.schooldiary20.viewmodel.ScheduleViewModel
 import java.time.LocalDate
@@ -41,14 +42,25 @@ import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
-    navController: NavController, viewModel: ScheduleViewModel = hiltViewModel()
+    navController: NavController, viewModel: ScheduleViewModel = hiltViewModel(),
+    role: UserRole
 ) {
     val schedule by viewModel.schedule.collectAsState()
     val currentWeek by viewModel.currentWeek.collectAsState()
     val weekDates by viewModel.currentWeekDates.collectAsState()
 
     LaunchedEffect(currentWeek) {
-        viewModel.getScheduleForStudent()
+        when (role) {
+            UserRole.TEACHER -> {
+                viewModel.getScheduleForTeacher()
+            }
+
+            UserRole.STUDENT -> {
+                viewModel.getScheduleForStudent()
+            }
+
+            else -> {}
+        }
     }
     Column(modifier = Modifier.fillMaxSize()) {
         WeekSelector(

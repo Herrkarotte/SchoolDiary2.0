@@ -67,7 +67,8 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
             academicYearStartDay
         )
 
-        academicYearStart = academicYearStart.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        academicYearStart =
+            academicYearStart.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
         return try {
             academicYearStart.plusWeeks(weekNumber.toLong() - 1)
@@ -113,6 +114,17 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
             }
         }
     }
+    fun getScheduleForTeacher() {
+        viewModelScope.launch {
+            _schedule.value = ScheduleState.Loading
+            try {
+                val schedule = repo.getScheduleForTeacher(_currentWeek.value.toString())
+                _schedule.value = ScheduleState.Success(schedule)
+            } catch (e: Exception) {
+                _schedule.value = ScheduleState.Error(e.message ?: "Ошибка загрузки")
+            }
+        }
+    }
 
     fun getDaySchedule(weekDayName: String) {
         viewModelScope.launch {
@@ -127,12 +139,18 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
                         null
                     }
                 }
+
                 ScheduleState.Loading -> {
                 }
+
                 else -> {
                 }
             }
         }
+    }
+
+    fun updateHomework(lessonId:String,newHomework:String) {
+
     }
 
 }

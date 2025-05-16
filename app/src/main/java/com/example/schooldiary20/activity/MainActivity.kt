@@ -81,7 +81,12 @@ fun MainApp() {
         ) {
             composable("login") { LoginScreen(navController, viewModel) }
             composable("profile") { ProfileScreen(navController, viewModel) }
-            composable("scheduleScreen") { ScheduleScreen(navController) }
+            composable("scheduleScreen") {
+                ScheduleScreen(
+                    navController,
+                    role = UserRole.fromString(currentUser?.roles?.firstOrNull() ?: "")
+                )
+            }
             composable("detailsScreen/{dayName}") { backStackEntry ->
                 val dayName = backStackEntry.arguments?.getString("dayName") ?: ""
                 val parentEntry = remember(backStackEntry) {
@@ -89,6 +94,7 @@ fun MainApp() {
                 }
                 val scheduleViewModel: ScheduleViewModel = hiltViewModel(parentEntry)
                 DetailsScreen(
+                    role = UserRole.fromString(currentUser?.roles?.firstOrNull() ?: ""),
                     dayName = dayName,
                     viewModel = scheduleViewModel,
                     navController = navController

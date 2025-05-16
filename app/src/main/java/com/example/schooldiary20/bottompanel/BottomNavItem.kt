@@ -41,7 +41,7 @@ sealed class BottomNavItem(
         fun getItemsForRole(role: UserRole): List<BottomNavItem> {
             return when (role) {
                 UserRole.STUDENT -> listOf(Profile, ScheduleScreen)
-                UserRole.TEACHER -> listOf(Profile, TeacherScreen,ScheduleScreen)
+                UserRole.TEACHER -> listOf(Profile, ScheduleScreen, TeacherScreen)
                 UserRole.HEADTEACHER -> listOf(Profile, HeadTeacherScreen)
             }
         }

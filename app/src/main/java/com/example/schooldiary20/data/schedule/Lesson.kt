@@ -8,5 +8,5 @@ data class Lesson(
     val roomName: String,
     val startTime: String,
     val subjectName: String,
-    val teacherName: String
+    val teacherName: String?
 )

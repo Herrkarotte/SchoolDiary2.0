@@ -7,6 +7,7 @@ import javax.inject.Inject
 
 interface ScheduleRepository {
     suspend fun getScheduleForStudent(weekId: String): ScheduleResponseItem
+    suspend fun getScheduleForTeacher(weekId: String): ScheduleResponseItem
 }
 
 class ScheduleRepositoryImp @Inject constructor(
@@ -19,5 +20,9 @@ class ScheduleRepositoryImp @Inject constructor(
         return api.getScheduleByClassId(prefs.userClass, weekId).firstOrNull()
             ?: throw Exception("Schedule not found")
     }
-}
 
+    override suspend fun getScheduleForTeacher(weekId: String): ScheduleResponseItem {
+        return api.getScheduleForTeacher(prefs.userId, weekId).firstOrNull()
+            ?: throw Exception("Schedule not found")
+    }
+}
