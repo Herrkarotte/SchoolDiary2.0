@@ -11,37 +11,32 @@ import com.example.schooldiary20.roles.UserRole
 sealed class BottomNavItem(
     val route: String,
     val icon: ImageVector,
-    val title: String
 ) {
     object Profile : BottomNavItem(
         route = "profile",
-        icon = Icons.Default.Person,
-        title = "Профиль"
+        icon = Icons.Default.Person
     )
 
     object TeacherScreen : BottomNavItem(
         route = "teacherScreen",
-        icon = Icons.Default.Call,
-        title = "Тестовый экран"
+        icon = Icons.Default.Call
     )
 
     object ScheduleScreen : BottomNavItem(
         route = "scheduleScreen",
-        icon = Icons.Default.Star,
-        title = "Тестовый экран"
+        icon = Icons.Default.Star
     )
 
     object HeadTeacherScreen : BottomNavItem(
         route = "headTeacherScreen",
-        icon = Icons.Default.AddCircle,
-        title = "Тестовый экран"
+        icon = Icons.Default.AddCircle
     )
 
     companion object {
         fun getItemsForRole(role: UserRole): List<BottomNavItem> {
             return when (role) {
-                UserRole.STUDENT -> listOf(Profile, ScheduleScreen)
-                UserRole.TEACHER -> listOf(Profile, ScheduleScreen, TeacherScreen)
+                UserRole.STUDENT -> listOf(ScheduleScreen, Profile)
+                UserRole.TEACHER -> listOf(ScheduleScreen, Profile, TeacherScreen)
                 UserRole.HEADTEACHER -> listOf(Profile, HeadTeacherScreen)
             }
         }

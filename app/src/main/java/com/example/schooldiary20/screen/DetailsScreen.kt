@@ -49,6 +49,7 @@ fun DetailsScreen(
     LaunchedEffect(dayName) {
         viewModel.getDaySchedule(dayName)
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -102,6 +103,9 @@ fun LessonDetailsCard(
 ) {
     var isEditing by remember { mutableStateOf(false) }
     var editedHomework by remember { mutableStateOf(lesson.homework ?: "") }
+    LaunchedEffect(lesson.homework) {
+        editedHomework = lesson.homework ?: ""
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()

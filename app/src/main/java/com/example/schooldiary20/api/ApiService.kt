@@ -1,11 +1,13 @@
 package com.example.schooldiary20.api
 
 import com.example.schooldiary20.data.schedule.ScheduleResponse
+import com.example.schooldiary20.data.schedule.UpdateHomework
 import com.example.schooldiary20.data.user.LoginRequest
 import com.example.schooldiary20.data.user.User
 import com.example.schooldiary20.data.user.UserInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -29,4 +31,9 @@ interface ApiService {
     suspend fun getScheduleForTeacher(
         @Path("userId") userId: String, @Path("weekId") weekId: String
     ): ScheduleResponse
+
+    @PATCH("Lesson/UpdateHomeworkByLessonId")
+    suspend fun updateHomework(
+        @Body homeworkData: UpdateHomework
+    )
 }

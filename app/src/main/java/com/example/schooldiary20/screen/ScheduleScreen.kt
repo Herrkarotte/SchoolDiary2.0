@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,9 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.schooldiary20.R
 import com.example.schooldiary20.data.schedule.Lesson
 import com.example.schooldiary20.data.schedule.Schedule
 import com.example.schooldiary20.roles.UserRole
@@ -42,8 +43,7 @@ import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
-    navController: NavController, viewModel: ScheduleViewModel = hiltViewModel(),
-    role: UserRole
+    navController: NavController, viewModel: ScheduleViewModel = hiltViewModel(), role: UserRole
 ) {
     val schedule by viewModel.schedule.collectAsState()
     val currentWeek by viewModel.currentWeek.collectAsState()
@@ -66,8 +66,7 @@ fun ScheduleScreen(
         WeekSelector(
             weekDates = weekDates,
             onPrevWeek = { viewModel.minusWeek() },
-            onNextWeek = { viewModel.plusWeek() }
-        )
+            onNextWeek = { viewModel.plusWeek() })
 
         Box(modifier = Modifier.weight(1f)) {
             when (schedule) {
@@ -123,7 +122,6 @@ fun WeekSelector(
         IconButton(onClick = onPrevWeek) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Предыдущая неделя")
         }
-
         weekDates?.let { (startDate, endDate) ->
             val dateFormater = DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
             Text(
@@ -190,11 +188,10 @@ fun LessonItem(lesson: Lesson) {
             text = "${lesson.lessonOrder}. ${lesson.subjectName}",
 
             )
-        if (lesson.homework != null) {
+        if (!lesson.homework.isNullOrEmpty()) {
             Icon(
-                imageVector = Icons.Default.Favorite,
+                painter = painterResource(id = R.drawable.homework_marker),
                 contentDescription = "Есть домашнее задание",
-                tint = Color.Red
             )
         }
         Text(

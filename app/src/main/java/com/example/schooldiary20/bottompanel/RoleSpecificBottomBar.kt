@@ -25,8 +25,7 @@ fun BottomBar(
     BottomNavigation {
         items.forEach { item ->
             BottomNavigationItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                label = { Text(item.title) },
+                icon = { Icon(item.icon,null)},
                 selected = currentRoute == item.route,
                 onClick = {
                     if (currentRoute != item.route) {

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schooldiary20.data.schedule.Schedule
 import com.example.schooldiary20.data.schedule.ScheduleResponseItem
+import com.example.schooldiary20.data.schedule.UpdateHomework
 import com.example.schooldiary20.repository.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,6 +115,7 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
             }
         }
     }
+
     fun getScheduleForTeacher() {
         viewModelScope.launch {
             _schedule.value = ScheduleState.Loading
@@ -149,8 +151,26 @@ class ScheduleViewModel @Inject constructor(private val repo: ScheduleRepository
         }
     }
 
-    fun updateHomework(lessonId:String,newHomework:String) {
+    fun updateHomework(lessonId: String, newHomework: String) {
+        viewModelScope.launch {
+            try {
+                val requestBody = UpdateHomework(lessonId, newHomework)
+                repo.updateHomeWork(requestBody)
+                val current = _selectedDay.value
+                if (current != null) {
+                    val updatedLessons = current.lessons.map { lesson ->
+                        if (lesson.lessonId == lessonId) {
+                            lesson.copy(homework = newHomework)
+                        } else {
+                            lesson
+                        }
+                    }
+                    _selectedDay.value = current.copy(lessons = updatedLessons)
+                }
+            } catch (e: Exception) {
 
+            }
+        }
     }
 
 }
