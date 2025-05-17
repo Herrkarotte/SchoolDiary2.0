@@ -124,8 +124,7 @@ fun LessonDetailsCard(
             Text(text = "Кабинет: ${lesson.roomName}")
             if (lesson.homework != null || role == UserRole.TEACHER) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 8.dp)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (isEditing) {
                         OutlinedTextField(
