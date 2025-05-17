@@ -68,9 +68,19 @@ fun ScheduleScreen(
             onPrevWeek = { viewModel.minusWeek() },
             onNextWeek = { viewModel.plusWeek() })
 
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier
+            .weight(1f)
+            .fillMaxSize()) {
             when (schedule) {
-                is ScheduleState.Loading -> LinearProgressIndicator(Modifier.align(Alignment.Center))
+                is ScheduleState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LinearProgressIndicator()
+                    }
+                }
+
                 is ScheduleState.Success -> {
                     val schedules = (schedule as ScheduleState.Success).schedule
                     LazyColumn(
@@ -92,15 +102,24 @@ fun ScheduleScreen(
                 }
 
                 is ScheduleState.Error -> {
-                    Box(modifier = Modifier.align(Alignment.Center)) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text("Не удалось загрузить расписание")
                         Button(
                             modifier = Modifier.padding(20.dp),
-                            onClick = { if (role == UserRole.STUDENT) {
-                                viewModel.getScheduleForStudent()
-                            } else {
-                                viewModel.getScheduleForTeacher()
-                            } }) { Text("Повторить") }
+                            onClick = {
+                                if (role == UserRole.STUDENT) {
+                                    viewModel.getScheduleForStudent()
+                                } else {
+                                    viewModel.getScheduleForTeacher()
+                                }
+                            }
+                        ) {
+                            Text("Повторить")
+                        }
                     }
                 }
 
@@ -189,8 +208,7 @@ fun LessonItem(lesson: Lesson) {
     ) {
         Text(
             text = "${lesson.lessonOrder}. ${lesson.subjectName}",
-
-            )
+        )
         if (!lesson.homework.isNullOrEmpty()) {
             Icon(
                 painter = painterResource(id = R.drawable.homework_marker),
