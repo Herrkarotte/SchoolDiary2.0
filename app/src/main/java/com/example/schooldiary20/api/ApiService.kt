@@ -1,5 +1,6 @@
 package com.example.schooldiary20.api
 
+import com.example.schooldiary20.data.grade.GradeResponse
 import com.example.schooldiary20.data.schedule.ScheduleResponse
 import com.example.schooldiary20.data.schedule.UpdateHomework
 import com.example.schooldiary20.data.user.LoginRequest
@@ -36,4 +37,9 @@ interface ApiService {
     suspend fun updateHomework(
         @Body homeworkData: UpdateHomework
     )
+
+    @GET("Grade/userId/{userId}")
+    suspend fun getGrade(
+        @Path("userId") userId: String
+    ): GradeResponse
 }
