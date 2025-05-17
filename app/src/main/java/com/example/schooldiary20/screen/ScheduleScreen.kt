@@ -94,10 +94,13 @@ fun ScheduleScreen(
                 is ScheduleState.Error -> {
                     Box(modifier = Modifier.align(Alignment.Center)) {
                         Text("Не удалось загрузить расписание")
-
                         Button(
                             modifier = Modifier.padding(20.dp),
-                            onClick = { viewModel.getScheduleForStudent() }) { Text("Повторить") }
+                            onClick = { if (role == UserRole.STUDENT) {
+                                viewModel.getScheduleForStudent()
+                            } else {
+                                viewModel.getScheduleForTeacher()
+                            } }) { Text("Повторить") }
                     }
                 }
 
