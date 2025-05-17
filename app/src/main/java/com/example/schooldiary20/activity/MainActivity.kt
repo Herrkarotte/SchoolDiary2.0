@@ -28,6 +28,7 @@ import com.example.schooldiary20.screen.HeadTeacherTestScreen
 import com.example.schooldiary20.screen.LoginScreen
 import com.example.schooldiary20.screen.ProfileScreen
 import com.example.schooldiary20.screen.ScheduleScreen
+import com.example.schooldiary20.screen.StatisticScreen
 import com.example.schooldiary20.screen.TeacherTestScreen
 import com.example.schooldiary20.ui.theme.SchoolDiary20Theme
 import com.example.schooldiary20.viewmodel.AuthState
@@ -98,6 +99,12 @@ fun MainApp() {
                     dayName = dayName,
                     viewModel = scheduleViewModel,
                     navController = navController
+                )
+            }
+            composable("statisticScreen") {
+                StatisticScreen(
+                    navController = navController,
+                    role = UserRole.fromString(currentUser?.roles?.firstOrNull() ?: "")
                 )
             }
             composable("teacherScreen") { TeacherTestScreen() }
